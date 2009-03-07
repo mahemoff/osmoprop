@@ -33,8 +33,20 @@ function grabIncidentStats(postcode, callback) {
       callback({
         message: incidentsPerWeek + " incidents per week",
         value: incidentsPerWeek,
-        coolness: Math.max(incidentsPerWeek, 7)/7
+        coolness: Math.min(incidentsPerWeek, 7)/7
       });
+    });
+  });
+}
+
+function grabJobStats(postcode, callback) {
+  console.log("job stats - postcode", postcode);
+  $.getJSON("http://www.jobcentreproplus.com/search.json?postcode=" + postcode + "&callback=?&distance=1&limit=9999", function(jobs) {
+    console.log("JOBS back");
+    callback({
+      message: jobs.length + " job postings",
+      value: jobs.length,
+      coolness: Math.min(jobs.length, 40)/40
     });
   });
 }
