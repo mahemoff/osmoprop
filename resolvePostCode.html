@@ -17,14 +17,6 @@
 
 		(function($) {
 
-		// XXX: obsolete
-		var localAjaxReq = function(uri, data, callback, type) {
-			if(window.Components && window.netscape && window.netscape.security && document.location.protocol.indexOf("http") == -1) {
-				window.netscape.security.PrivilegeManager.enablePrivilege("UniversalBrowserRead");
-			}
-			$.get(uri, data, callback, type);
-		}
-
 		resolvePostCode = function(query, callback) {
 			var uriTemplate = "http://maps.google.com/maps/geo?q=%0&output=%1&oe=utf8&key=%2&callback=?";
 			var format = "json";
@@ -37,8 +29,19 @@
 			$.getJSON(uri, null, _callback);
 		};
 
-		var resolvePostCodeCallback = function(context, callback) {
+		var resolvePostCodeCallback = function(data, callback) {
 			console.log("resolvePostCodeCallback", arguments);
+			try {
+				var postcode = data.Placemark[0].
+					AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.
+					Locality.PostalCode.PostalCodeNumber; // TODO: find PostalCodeNumber in object
+				while(postcode.length < 7) { // Google strips last two chars -- XXX: hacky!?
+					postcode += "A";
+				}
+			} catch(ex) {
+				postcode = null;
+			}
+			callback(postcode);
 		};
 
 		})(jQuery);
