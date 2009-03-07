@@ -29,11 +29,11 @@ function grabIncidentStats(postcode, callback) {
       var firstIncidentDate = Date.parse(theDate);
       var elapsed = ((new Date()).getTime() - firstIncidentDate)/(7*24*60*60*1000);
       console.log("elapsed weeks", elapsed, "incidents", incidents.length);
-      var incidentsPerWeek = incidents.length/elapsed;
+      var incidentsPerWeek = neaten(incidents.length/elapsed);
       callback({
         message: incidentsPerWeek + " incidents per week",
         value: incidentsPerWeek,
-        coolness: Math.min(incidentsPerWeek, 7)/7
+        coolness: neaten(Math.min(incidentsPerWeek, 7)/7)
       });
     });
   });
@@ -46,7 +46,11 @@ function grabJobStats(postcode, callback) {
     callback({
       message: jobs.length + " job postings",
       value: jobs.length,
-      coolness: Math.min(jobs.length, 40)/40
+      coolness: neaten(Math.min(jobs.length, 200)/200)
     });
   });
+}
+
+function neaten(val) {
+  return (Math.floor(val*100))/100;
 }
